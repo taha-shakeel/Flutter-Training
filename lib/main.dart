@@ -1,26 +1,14 @@
 import 'package:flutter/material.dart';
-import './pages/chatPage.dart' as chat;
+import './pages/enterTodoListItems.dart' as todoListInput;
 
 void main() => runApp(MyApp());
-
-class HexColor extends Color {
-  static int _getColorFromHex(String hexColor) {
-    hexColor = hexColor.toUpperCase().replaceAll("#", "");
-    if (hexColor.length == 6) {
-      hexColor = "FF" + hexColor;
-    }
-    return int.parse(hexColor, radix: 16);
-  }
-
-  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
-}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Simple todo',
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -32,7 +20,6 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.blue,
-        primaryColor: HexColor('#075E54'),
       ),
       home: MyHomePage(),
     );
@@ -58,6 +45,37 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  List<String> _todoItems = [];
+
+  // This will be called each time the + button is pressed
+  void _addTodoItem(param) {
+    // Putting our code inside "setState" tells the app that our state has changed, and
+    // it will automatically re-render the list
+    setState(() {
+      int index = _todoItems.length;
+      _todoItems.add(param + index.toString());
+    });
+  }
+
+  // Build the whole list of todo items
+  Widget _buildTodoList() {
+    return new ListView.builder(
+      itemBuilder: (context, index) {
+        // itemBuilder will be automatically be called as many times as it takes for the
+        // list to fill up its available space, which is most likely more than the
+        // number of todo items we have. So, we need to check the index is OK.
+        if (index < _todoItems.length) {
+          return _buildTodoItem(_todoItems[index]);
+        }
+      },
+    );
+  }
+
+  // Build a single todo item
+  Widget _buildTodoItem(String todoText) {
+    return new ListTile(title: new Text(todoText));
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -66,44 +84,21 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return DefaultTabController(
-      length: 4,
-      initialIndex: 1,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('WhatsApp'),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.search, size: 30, color: Colors.white),
-              tooltip: 'Search',
-              color: Colors.blue,
-            ),
-            IconButton(
-              icon: const Icon(Icons.more_vert, size: 30, color: Colors.white),
-              tooltip: 'Next page',
-              color: Colors.blue,
-            ),
-          ],
-          bottom: TabBar(
-            indicatorColor: Colors.white,
-            tabs: <Widget>[
-              Tab(
-                icon: Icon(Icons.camera_alt),
-              ),
-              Tab(text: 'CHATS'),
-              Tab(text: 'STATUS'),
-              Tab(text: 'CALLS'),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          children: <Widget>[
-            Icon(Icons.camera_front),
-            chat.Chat(),
-            Icon(Icons.directions_transit),
-            Icon(Icons.directions_bike),
-          ],
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('ToDo List'),
+      ),
+      body: _buildTodoList(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => todoListInput.TodoListInput()),
+          );
+        },
+        child: Icon(Icons.add),
+        backgroundColor: Colors.green,
       ),
     );
   }
