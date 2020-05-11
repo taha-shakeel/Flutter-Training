@@ -26,7 +26,9 @@ class _TodoListInputState extends State<TodoListInput> {
           child: TextField(
             controller: myController,
             decoration: InputDecoration(hintText: 'Enter a Item here...'),
-            onSubmitted: (toDoItem) {},
+            onSubmitted: (toDoItem) {
+              Navigator.pop(context, toDoItem);
+            },
           ),
         ),
       ),

@@ -57,6 +57,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  _asyncCallBackFunction(BuildContext context) async {
+    final returnedTodoItem = await Navigator.push(context,
+        MaterialPageRoute(builder: (context) => todoListInput.TodoListInput()));
+    _addTodoItem(returnedTodoItem);
+  }
+
   // Build the whole list of todo items
   Widget _buildTodoList() {
     return new ListView.builder(
@@ -91,11 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: _buildTodoList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => todoListInput.TodoListInput()),
-          );
+          _asyncCallBackFunction(context);
         },
         child: Icon(Icons.add),
         backgroundColor: Colors.green,
